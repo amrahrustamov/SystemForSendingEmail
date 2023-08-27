@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pustok.Database;
-using Pustok.ViewModels.Client;
 using Pustok.Database.Models;
+using MimeKit;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using Pustok.Utilites;
-using Microsoft.EntityFrameworkCore;
-using Pustok.ViewModels.Admin.Product;
-using Pustok.Contracts;
-using Pustok.Services.Abstracts;
 
 namespace Pustok.Controllers.Client;
 
 public class AccountController : Controller
 {
+    private readonly SmtpSettings _smtpSettings;
     private readonly PustokDbContext _pustokDbContext;
-    public Utilities _utilites;
 
-    public AccountController(PustokDbContext pustokDbContext)
+    public AccountController(IOptions<SmtpSettings> smtpSettings, PustokDbContext pustokDbContext)
     {
+        _smtpSettings = smtpSettings.Value;
         _pustokDbContext = pustokDbContext;
     }
+
     public IActionResult Dashboard()
     {
         return View("~/Views/Client/Account/Dashboard.cshtml");
@@ -40,10 +40,9 @@ public class AccountController : Controller
 
     public IActionResult Logout()
     {
-        //logic
-
         return RedirectToAction("index", "home");
     }
+
     [HttpGet("add")]
     public IActionResult Email()
     {
@@ -60,22 +59,38 @@ public class AccountController : Controller
             return View("~/Views/Client/Account/Email.cshtml", model);
         }
 
-        var emails = new Email(
+        Utilities utilities = new Utilities();
+        string divideEmail = model.EmailAddress.ToString();
+        string[] getEamil = utilities.GetEmails(divideEmail);
+
+        var email = new Email(
             model.Title,
             model.Content,
             model.EmailAddress,
             model.SendingTime = DateTime.UtcNow
         );
 
-        _pustokDbContext.Emails.Add(emails);
+        //var message = new MimeMessage();
+        //message.From.Add(new MailboxAddress("Sender", "amrahrustamov94@yandex.com"));
+        //message.To.Add(new MailboxAddress("Recipient", email.EmailAddress));
+        //message.Subject = email.Title;
+
+        //var builder = new BodyBuilder();
+        //builder.TextBody = email.Content;
+        //message.Body = builder.ToMessageBody();
+
+        //using (var client = new SmtpClient())
+        //{
+        //    client.Connect(_smtpSettings.Server, _smtpSettings.Port, _smtpSettings.UseSsl);
+        //    client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
+        //    client.Send(message);
+        //    client.Disconnect(true);
+        //}
+
+        _pustokDbContext.Emails.Add(email);
         _pustokDbContext.SaveChanges();
 
-        var email = _pustokDbContext.Emails.ToList();
-        return View("~/Views/Client/Account/Email.cshtml", email);
+        var emails = _pustokDbContext.Emails.ToList();
+        return View("~/Views/Client/Account/Email.cshtml", emails);
     }
-
-
-
-    //return View("~/Views/Client/Account/Email.cshtml", emails);
 }
-

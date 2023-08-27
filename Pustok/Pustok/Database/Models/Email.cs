@@ -6,7 +6,7 @@ namespace Pustok.Database.Models
     {
         public Email()
         {
-            // Initialize default values or leave properties empty
+           
         }
         public Email(string title, string content, string emailAddress, DateTime sendingTime)
         {
