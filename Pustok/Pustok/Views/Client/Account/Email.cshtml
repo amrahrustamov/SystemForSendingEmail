@@ -1,0 +1,78 @@
+﻿@using Pustok.Database.Models;
+@model List<Email>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Send Email
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" asp-controller="Account" asp-action="Email">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" placeholder="Enter title">
+                            </div>
+                            <div class="form-group">
+                                <label for="content">Content</label>
+                                <input type="text" class="form-control" id="content" name="content" placeholder="Enter content">
+                            </div>
+                            <div class="form-group">
+                                <label for="EmailAddress">Email</label>
+                                <input type="text" class="form-control" id="EmailAddress" name="EmailAddress" placeholder="Enter email">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mt-4 mt-md-0">
+                <div class="card">
+                    <div class="card-header">
+                        Sent Emails
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <!-- Here you can generate list items dynamically using your backend -->
+                            @foreach (var email in Model)
+                            {                           
+                                 <li class="list-group-item d-flex justify-content-between">
+                                     <div>
+                                         <h6>@email.Title</h6>
+                                         <p>@email.Content</p>
+                                         <small>@email.EmailAddress</small>
+                                     </div>
+                                     <div>
+                                         <small>Sent: @email.SendingTime</small>
+                                         <button class="btn btn-link">More Details</button>
+                                     </div>
+                                 </li>
+                            }
+                            <!-- Repeat list items as needed -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
