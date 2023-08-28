@@ -93,4 +93,10 @@ public class AccountController : Controller
         var emails = _pustokDbContext.Emails.ToList();
         return View("~/Views/Client/Account/Email.cshtml", emails);
     }
+
+    public IActionResult AllEmail()
+    {
+        var emails = _pustokDbContext.Emails.ToList();
+        return View("~/Views/Client/Account/AllEmail.cshtml", emails);
+    }
 }
