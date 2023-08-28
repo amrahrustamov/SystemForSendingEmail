@@ -1,4 +1,6 @@
-﻿@using Pustok.Database.Models;
+﻿@using System;
+@using Pustok.Database.Models;
+@using Pustok.Utilites;
 @model List<Email>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
@@ -45,13 +47,16 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
+                            @{
+                                Utilities utilities = new Utilities();
+                            }
                             @foreach (var email in Model)
-                            {                           
-                                 <li class="list-group-item d-flex justify-content-between">
+                            {
+                                <li class="list-group-item d-flex justify-content-between">
                                      <div>
-										<h6>@email.Title</h6>                     
-                                            <p>@email.Content</p>
-                                        <small>@email.EmailAddress</small>
+                                        <h6>@utilities.Trim(email.Title, 8)...</h6>
+                                        <p>@utilities.Trim(email.Content, 12)...</p>
+                                        <small>@utilities.Trim(email.EmailAddress, 20)...</small>
                                      </div>
                                      <div>
                                          <small>Sent: @email.SendingTime</small>
