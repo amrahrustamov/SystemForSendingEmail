@@ -72,7 +72,7 @@ public class AccountController : Controller
              );
 
           
-             utilities.SendMessage(model,_smtpSettings);
+             //utilities.SendMessage(model,_smtpSettings);
 
              _pustokDbContext.Emails.Add(email);
              _pustokDbContext.SaveChanges();
