@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Pustok.Database.Models;
 using Pustok.ViewModels.Client;
+using MimeKit;
+using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Pustok.Utilites
 {
@@ -64,6 +67,25 @@ namespace Pustok.Utilites
         {
             if (!StringIsNull(data) && Length(data,10,20)&& EmailSymbol(data)) { return true; }
             return false;
+        }
+        public void SendMessage(Email email, SmtpSettings smtpSettings)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Sender", "amrahrustamov94@yandex.com"));
+            message.To.Add(new MailboxAddress("Recipient", email.EmailAddress));
+            message.Subject = email.Title;
+
+            var builder = new BodyBuilder();
+            builder.TextBody = email.Content;
+            message.Body = builder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                client.Connect(smtpSettings.Server, smtpSettings.Port, smtpSettings.UseSsl);
+                client.Authenticate(smtpSettings.Username, smtpSettings.Password);
+                client.Send(message);
+                client.Disconnect(true);
+            }
         }
 
     }

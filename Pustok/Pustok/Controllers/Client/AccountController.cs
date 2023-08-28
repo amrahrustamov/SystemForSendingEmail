@@ -59,14 +59,12 @@ public class AccountController : Controller
             model = _pustokDbContext.Emails.FirstOrDefault();
             return View("~/Views/Client/Account/Email.cshtml", model);
         }
-
         Utilities utilities = new Utilities();
         try
         {
+             //string divideEmail = model.EmailAddress.ToString();
+             //string[] getEamil = utilities.GetEmails(divideEmail);
              var checkhing = utilities.CheckMessageInputs(model);
-             string divideEmail = model.EmailAddress.ToString();
-
-             string[] getEamil = utilities.GetEmails(divideEmail);
 
              var email = new Email(
                  checkhing.Title,
@@ -74,24 +72,7 @@ public class AccountController : Controller
                  checkhing.EmailAddress,
                  checkhing.SendingTime = DateTime.UtcNow
              );
-
-             //var message = new MimeMessage();
-             //message.From.Add(new MailboxAddress("Sender", "amrahrustamov94@yandex.com"));
-             //message.To.Add(new MailboxAddress("Recipient", email.EmailAddress));
-             //message.Subject = email.Title;
-
-             //var builder = new BodyBuilder();
-             //builder.TextBody = email.Content;
-             //message.Body = builder.ToMessageBody();
-
-             //using (var client = new SmtpClient())
-             //{
-             //    client.Connect(_smtpSettings.Server, _smtpSettings.Port, _smtpSettings.UseSsl);
-             //    client.Authenticate(_smtpSettings.Username, _smtpSettings.Password);
-             //    client.Send(message);
-             //    client.Disconnect(true);
-             //}
-
+             utilities.SendMessage(email, _smtpSettings);
              _pustokDbContext.Emails.Add(email);
              _pustokDbContext.SaveChanges();
         }
@@ -105,10 +86,7 @@ public class AccountController : Controller
         }
             var emails = _pustokDbContext.Emails.ToList();
         return View("~/Views/Client/Account/Email.cshtml", emails);
-
-
     }
-
     public IActionResult AllEmail()
     {
         var emails = _pustokDbContext.Emails.ToList();
