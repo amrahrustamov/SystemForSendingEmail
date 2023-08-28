@@ -62,9 +62,7 @@ public class AccountController : Controller
         Utilities utilities = new Utilities();
         try
         {
-             //string divideEmail = model.EmailAddress.ToString();
-             //string[] getEamil = utilities.GetEmails(divideEmail);
-             var checkhing = utilities.CheckMessageInputs(model);
+            var checkhing = utilities.CheckMessageInputs(model);
 
              var email = new Email(
                  checkhing.Title,
@@ -72,7 +70,10 @@ public class AccountController : Controller
                  checkhing.EmailAddress,
                  checkhing.SendingTime = DateTime.UtcNow
              );
-             utilities.SendMessage(email, _smtpSettings);
+
+          
+             utilities.SendMessage(model,_smtpSettings);
+
              _pustokDbContext.Emails.Add(email);
              _pustokDbContext.SaveChanges();
         }

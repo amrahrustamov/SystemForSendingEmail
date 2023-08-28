@@ -4,6 +4,7 @@ using Pustok.ViewModels.Client;
 using MimeKit;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Components.Forms;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Pustok.Utilites
 {
@@ -68,25 +69,30 @@ namespace Pustok.Utilites
             if (!StringIsNull(data) && Length(data,10,20)&& EmailSymbol(data)) { return true; }
             return false;
         }
-        public void SendMessage(Email email, SmtpSettings smtpSettings)
+        public void SendMessage(Email model, SmtpSettings smtpSettings)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Sender", "amrahrustamov94@yandex.com"));
-            message.To.Add(new MailboxAddress("Recipient", email.EmailAddress));
-            message.Subject = email.Title;
+            string divideEmail = model.EmailAddress.ToString();
+            string[] getEamil = GetEmails(divideEmail);
 
-            var builder = new BodyBuilder();
-            builder.TextBody = email.Content;
-            message.Body = builder.ToMessageBody();
-
-            using (var client = new SmtpClient())
+            for(int i = 0; i < getEamil.Length; i++)
             {
-                client.Connect(smtpSettings.Server, smtpSettings.Port, smtpSettings.UseSsl);
-                client.Authenticate(smtpSettings.Username, smtpSettings.Password);
-                client.Send(message);
-                client.Disconnect(true);
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Sender", "amrahrustamov94@yandex.com"));
+                message.To.Add(new MailboxAddress("Recipient", getEamil[i]));
+                message.Subject = model.Title;
+
+                var builder = new BodyBuilder();
+                builder.TextBody = model.Content;
+                message.Body = builder.ToMessageBody();
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpSettings.Server, smtpSettings.Port, smtpSettings.UseSsl);
+                    client.Authenticate(smtpSettings.Username, smtpSettings.Password);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
             }
         }
-
     }
 }
